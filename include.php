@@ -2,14 +2,10 @@
 
 define("ROOT", dirname(__FILE__) . "/");
 define("LIBRARY", "library/");
-define("SHOSTURL", "http://welcome.totheinter.net/apps/metrics/");
-define("HOSTURL", "http://welcome.totheinter.net/apps/metrics/");
-define("DOMAIN", "welcome.totheinter.net");
-define("COOKIENAME", "aurora");
-
-define("SMTP_HOST", "mail.aurora2.com");
-define("SMTP_USER", "bot+aurora2.com");
-define("SMTP_PASS", "r4tb4ndit");
+define("SHOSTURL", "http://drivesafetogether.com/");
+define("HOSTURL", "http://drivesafetogether.com");
+define("DOMAIN", "drivesafetogether.com");
+define("COOKIENAME", "drive");
 
 putenv("TZ=GMT");
 
