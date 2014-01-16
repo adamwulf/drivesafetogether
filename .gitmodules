@@ -4,3 +4,6 @@
 [submodule "json-to-mysql"]
 	path = json-to-mysql
 	url = git@github.com:adamwulf/json-to-mysql.git
+[submodule "automatic-php-api"]
+	path = automatic-php-api
+	url = git@github.com:adamwulf/automatic-php-api.git
