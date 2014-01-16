@@ -39,7 +39,7 @@ class EasyApp{
 			$sessions = $this->db->table("sessions");
 			$session_info = $sessions->find(array("session_id" => $this->sessionId()))->fetch_array();
 			if($session_info){
-				$this->automatic->setOAuthToken($session["automatic_token"]);
+				$this->automatic->setOAuthToken($session_info["automatic_token"]);
 			}
 		}
 		return $this->automatic->isLoggedIn();
@@ -53,8 +53,8 @@ class EasyApp{
 	}
 	
 	public function validateLoginForCode($code){
-	    $response_token = $automatic->getTokenForCode($_GET["code"]);
-	    $automatic->setOAuthToken($response_token);
+	    $response_token = $this->automatic->getTokenForCode($_GET["code"]);
+	    $this->automatic->setOAuthToken($response_token);
 	    
 		$sess = array("session_id" => $_SESSION["uuid"],
 					  "automatic_token" => $response_token,

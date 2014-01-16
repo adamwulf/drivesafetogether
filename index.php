@@ -27,7 +27,7 @@ if(isset($_GET["logout"])){
 	$app->logout();
     header('Location: ' . AUTOMATIC_REDIRECT_URI);
     die();
-}else if (isset($_GET['code']) {
+}else if (isset($_GET['code'])) {
 	$app->validateLoginForCode($_GET["code"]);    
     header('Location: ' . AUTOMATIC_REDIRECT_URI);
     die('Redirect');
@@ -43,7 +43,7 @@ if($app->isLoggedIn()){
 	echo "<a href='" . AUTOMATIC_REDIRECT_URI . "?logout" . "'>Log Out</a><br>";
 	echo "<br><br>";
 	
-	$response = $automatic->getTrips(1, 5);
+	$response = $app->automatic()->getTrips(1, 5);
 	print_r($response);
 }else{
 	echo "<a href='" . AUTOMATIC_REDIRECT_URI . "?automatic_login" . "'>";
