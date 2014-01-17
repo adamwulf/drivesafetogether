@@ -32,7 +32,11 @@ if(isset($_GET["logout"])){
     header('Location: ' . AUTOMATIC_REDIRECT_URI);
     die('Redirect');
 }else if(isset($_GET['automatic_login'])){
-	$scopes = array("scope:location", "scope:vehicle", "scope:trip:summary");
+	$scopes = array("scope:vehicle",
+					"scope:trip:summary",
+					"scope:notification:speeding",
+					"scope:notification:hard_brake",
+					"scope:notification:hard_accel");
 	$auth_url = $app->automatic()->authenticationURLForScopes($scopes);
     header('Location: ' . $auth_url);
     die('Redirect');
