@@ -39,7 +39,12 @@ class EasyApp{
 			$sessions = $this->db->table("sessions");
 			$session_info = $sessions->find(array("session_id" => $this->sessionId()))->fetch_array();
 			if($session_info){
-				$this->automatic->setOAuthToken($session_info["automatic_token"]);
+				$user_id = $session_info["automatic_user_id"];
+				$users_table = $this->db->table("automatic_users");
+				$user_info = $users_table->find(array("user_id" => $user_id))->fetch_array();
+				if($user_info){
+					$this->automatic->setOAuthToken($user_info["access_token"]);
+				}
 			}
 		}
 		return $this->automatic->isLoggedIn();
@@ -52,13 +57,25 @@ class EasyApp{
 		session_unset();
 	}
 	
+	private function saveUser($user_obj){
+		$users_table = $this->db->table("automatic_users");
+		$users_table->validateTableFor($user_obj);
+		$saved_info = $users_table->find(array("user_id" => $user_obj->user_id))->fetch_array();
+		if($saved_info){
+			$user_obj->id = $saved_info["id"];
+		}
+		$users_table->save($user_obj);
+	}
+	
 	public function validateLoginForCode($code){
-	    $response_token = $this->automatic->getTokenForCode($_GET["code"]);
-	    $this->automatic->setOAuthToken($response_token);
+	    $user_obj = $this->automatic->getTokenForCode($_GET["code"]);
+	    $this->automatic->setOAuthToken($user_obj->access_token);
+	    
+	    $user_obj->last_active = date("Y-m-d H:i:s");
+	    $this->saveUser($user_obj);
 	    
 		$sess = array("session_id" => $_SESSION["uuid"],
-					  "automatic_token" => $response_token,
-					  "last_active" => date("Y-m-d H:i:s"));
+					  "automatic_user_id" => $user_obj->user_id);
 		$ret = $this->db->save($sess, "sessions");
 	}
 	

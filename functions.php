@@ -23,4 +23,8 @@ function gen_uuid() {
 }
 
 
+function object(){
+	return (object) array();
+}
+
 ?>
