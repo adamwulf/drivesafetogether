@@ -38,18 +38,11 @@ if(isset($_GET["logout"])){
     die('Redirect');
 }
 
+
 if($app->isLoggedIn()){
-	echo "logged in<br>";
-	echo "<a href='" . AUTOMATIC_REDIRECT_URI . "?logout" . "'>Log Out</a><br>";
-	echo "<br><br>";
-	
-	$response = $app->automatic()->getTrips(1, 5);
-	print_r($response);
+	include "pages/dashboard.php";
 }else{
-	echo "<a href='" . AUTOMATIC_REDIRECT_URI . "?automatic_login" . "'>";
-	echo "Sign in with Automatic";
-	echo "</a>";
-	echo "<br><br>";
+	include "pages/login.php";
 }
 
 ?>

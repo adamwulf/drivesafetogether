@@ -3,7 +3,7 @@
 define("ROOT", dirname(__FILE__) . "/");
 define("LIBRARY", "library/");
 define("SHOSTURL", "http://drivesafetogether.com/");
-define("HOSTURL", "http://drivesafetogether.com");
+define("HOSTURL", "http://drivesafetogether.com/");
 define("DOMAIN", "drivesafetogether.com");
 define("COOKIENAME", "drive");
 
