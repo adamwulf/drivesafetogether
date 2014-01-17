@@ -113,42 +113,47 @@ class EasyApp{
 			
 			do{
 				$trips = $this->automatic()->getTrips($page,50);
-				foreach($trips["result"] as $tr){
-					$trip_start = date("Y-m-d H:i:s", $tr["start_time"] / 1000);
-					$past_24_hours = date("Y-m-d H:i:s", time() - 24*60*60);
+				if(!$trips){
+					// invalid token, or otherwise unable to refresh trips
+					break;
+				}else{
+					foreach($trips["result"] as $tr){
+						$trip_start = date("Y-m-d H:i:s", $tr["start_time"] / 1000);
+						$past_24_hours = date("Y-m-d H:i:s", time() - 24*60*60);
+						
+						if(!$force_load_all && $trip_start < $past_24_hours){
+							// only import last 24 hours per user
+							break;
+						}
 					
-					if(!$force_load_all && $trip_start < $past_24_hours){
-						// only import last 24 hours per user
-						break;
+						$vehicle = object();
+						$vehicle->vehicle_id = $tr["vehicle"]["id"];
+						$vehicle->display_name = $tr["vehicle"]["display_name"];
+						$vehicle->year = $tr["vehicle"]["year"];
+						$vehicle->make = $tr["vehicle"]["make"];
+						$vehicle->model = $tr["vehicle"]["model"];
+						
+						$this->saveVehicle($vehicle);
+					
+						$trip = object();
+						$trip->trip_id = $tr["id"];
+						$trip->user_id = $tr["user"]["id"];
+						$trip->vehicle_id = $tr["vehicle"]["id"];
+						$trip->startdt = date("Y-m-d H:i:s", $tr["start_time"] / 1000);
+						$trip->enddt = date("Y-m-d H:i:s", $tr["end_time"] / 1000);
+						$trip->distance_meters = $tr["distance_m"];
+						$trip->fuel_cost_usd = $tr["fuel_cost_usd"];
+						$trip->fuel_volume_gal = $tr["fuel_volume_gal"];
+						$trip->average_mpg = $tr["average_mpg"];
+						$trip->hard_accels = $tr["hard_accels"];
+						$trip->hard_brakes = $tr["hard_brakes"];
+						$trip->duration_over_80_s = $tr["duration_over_80_s"];
+						$trip->duration_over_75_s = $tr["duration_over_75_s"];
+						$trip->duration_over_70_s = $tr["duration_over_70_s"];
+	
+						$this->saveTrip($trip);
+						echo "imported.\n";
 					}
-				
-					$vehicle = object();
-					$vehicle->vehicle_id = $tr["vehicle"]["id"];
-					$vehicle->display_name = $tr["vehicle"]["display_name"];
-					$vehicle->year = $tr["vehicle"]["year"];
-					$vehicle->make = $tr["vehicle"]["make"];
-					$vehicle->model = $tr["vehicle"]["model"];
-					
-					$this->saveVehicle($vehicle);
-				
-					$trip = object();
-					$trip->trip_id = $tr["id"];
-					$trip->user_id = $tr["user"]["id"];
-					$trip->vehicle_id = $tr["vehicle"]["id"];
-					$trip->startdt = date("Y-m-d H:i:s", $tr["start_time"] / 1000);
-					$trip->enddt = date("Y-m-d H:i:s", $tr["end_time"] / 1000);
-					$trip->distance_meters = $tr["distance_m"];
-					$trip->fuel_cost_usd = $tr["fuel_cost_usd"];
-					$trip->fuel_volume_gal = $tr["fuel_volume_gal"];
-					$trip->average_mpg = $tr["average_mpg"];
-					$trip->hard_accels = $tr["hard_accels"];
-					$trip->hard_brakes = $tr["hard_brakes"];
-					$trip->duration_over_80_s = $tr["duration_over_80_s"];
-					$trip->duration_over_75_s = $tr["duration_over_75_s"];
-					$trip->duration_over_70_s = $tr["duration_over_70_s"];
-
-					$this->saveTrip($trip);
-					echo "imported.\n";
 				}
 				$page++;
 			}while($force_load_all && count($trips["result"]));
