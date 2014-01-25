@@ -44,7 +44,11 @@ if(isset($_GET["logout"])){
 
 
 if($app->isLoggedIn()){
-	include "pages/dashboard.php";
+	if(isset($_GET["data"])){
+		include "pages/data.php";
+	}else{
+		include "pages/dashboard.php";
+	}
 }else{
 	include "pages/login.php";
 }

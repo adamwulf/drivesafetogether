@@ -2,6 +2,10 @@
 <head>
 <link href='http://fonts.googleapis.com/css?family=Duru+Sans' rel='stylesheet' type='text/css'>
 <link href="<?=HOSTURL?>pages/style.css" rel="stylesheet" type="text/css" media="screen" />
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="//drivesafetogether.com/js/flot/jquery.flot.js"></script>
+<script src="//drivesafetogether.com/js/flot/jquery.flot.resize.js"></script>
+<script src="//drivesafetogether.com/js/flot/jquery.flot.time.js"></script>
 </head>
 <body>
 <? include ROOT . "pages/analytics.php"; ?>
@@ -59,8 +63,8 @@
 <section id="last-weeks" class='clearfix'>
 	<h2>Last 30 days</h2>
 	<h3>Score / Brakes,accel,speeding / MPG / distance</h3>
-	<div class='roundedBox' style='overflow:auto;'>
-		graph of last month
+	<div class='roundedBox'>
+		<div id="placeholder" class="graph"></div>
 	</div>
 </section>
 <section id="your-car" class='clearfix'>
@@ -88,11 +92,6 @@
 		</div>
 	</div>
 </section>
-
-
-
-
-
 <footer>
 	Copyright (c) 2014 Milestone Made, LLC<br>
 	<script language="JavaScript">
@@ -102,5 +101,22 @@
 					document.write(name + "@" + domain + '</a>');
 	</script>
 </footer>
+<script>
+$.ajax("http://drivesafetogether.com/?data", {
+	success : function (data, status, xhr){
+		var options = {
+			xaxis: {
+				mode: "time",
+				timeformat: "%b",
+				tickSize: [1, "month"]
+			}
+		};
+		var plot = $.plot("#placeholder", [data], options);
+	},
+	error : function(xhr, status, error){
+		alert(status + ": " + error);
+	}
+})
+</script>
 </body>
 </html>

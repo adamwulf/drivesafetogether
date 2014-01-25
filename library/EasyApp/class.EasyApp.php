@@ -50,6 +50,15 @@ class EasyApp{
 		return $this->automatic->isLoggedIn();
 	}
 	
+	public function getAutomaticUserId(){
+		$sessions = $this->db->table("sessions");
+		$session_info = $sessions->find(array("session_id" => $this->sessionId()))->fetch_array();
+		if($session_info){
+			return $session_info["automatic_user_id"];
+		}
+		return false;
+	}
+	
 	public function logout(){
 		$sessions = $this->db->table("sessions");
 		$sessions->delete(array("session_id" => $_SESSION["uuid"]));
@@ -103,6 +112,25 @@ class EasyApp{
 		return $this->automatic;
 	}
 
+	
+	public function getTripDataBetween($startdt, $enddt){
+		$user_id = $this->getAutomaticUserId();
+		if($this->isLoggedIn()){
+			$sql = "SELECT YEARWEEK(startdt) as dt, MAX(MONTH(startdt)) AS month, SUM(hard_accels) AS hard_accels, SUM(hard_brakes) AS hard_brakes, SUM(distance_meters) AS distance, "
+				 . " AVG(average_mpg) AS average_mpg, SUM(duration_over_80_s + duration_over_75_s) AS duration_speeding "
+				 . " FROM automatic_trips WHERE enddt > '" . addslashes($startdt) . "' AND startdt < '" . addslashes($enddt) . "' "
+			     . " AND user_id = '" . addslashes($user_id) . "' "
+			     . " GROUP BY dt ORDER BY MAX(DATE(startdt)) ASC";
+			$results = $this->db->mysql()->query($sql);
+			
+			$out = array();
+			while($row = $results->fetch_array()){
+				$out[] = (object) $row;
+			}
+			return $out;
+		}
+		return array();
+	}
 	
 	
 	public function cronImportTrips($force_load_all = false){

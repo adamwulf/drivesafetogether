@@ -4,3 +4,6 @@
 [submodule "automatic-php-api"]
 	path = automatic-php-api
 	url = git@github.com:adamwulf/automatic-php-api.git
+[submodule "js/flot"]
+	path = js/flot
+	url = git@github.com:flot/flot.git

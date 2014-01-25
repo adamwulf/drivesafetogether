@@ -59,8 +59,6 @@ div.roundedBox{
 }
 
 
-
-
 .clearfix:after {
 	content: ".";
 	display: block;
@@ -76,4 +74,12 @@ html[xmlns] .clearfix {
  
 * html .clearfix {
 	height: 1%;
+}
+
+
+
+
+.graph{
+	width: auto;
+	height:200px;
 }
