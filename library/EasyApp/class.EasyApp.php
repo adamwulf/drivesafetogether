@@ -116,11 +116,11 @@ class EasyApp{
 	public function getTripDataBetween($startdt, $enddt){
 		$user_id = $this->getAutomaticUserId();
 		if($this->isLoggedIn()){
-			$sql = "SELECT YEARWEEK(startdt) as dt, MAX(MONTH(startdt)) AS month, SUM(hard_accels) AS hard_accels, SUM(hard_brakes) AS hard_brakes, SUM(distance_meters) AS distance, "
+			$sql = "SELECT YEARWEEK(startdt,1) as dt, SUM(hard_accels) AS hard_accels, SUM(hard_brakes) AS hard_brakes, SUM(distance_meters) AS distance, "
 				 . " AVG(average_mpg) AS average_mpg, SUM(duration_over_80_s + duration_over_75_s) AS duration_speeding "
 				 . " FROM automatic_trips WHERE enddt > '" . addslashes($startdt) . "' AND startdt < '" . addslashes($enddt) . "' "
 			     . " AND user_id = '" . addslashes($user_id) . "' "
-			     . " GROUP BY dt ORDER BY MAX(DATE(startdt)) ASC";
+			     . " GROUP BY dt ORDER BY dt DESC";
 			$results = $this->db->mysql()->query($sql);
 			
 			$out = array();

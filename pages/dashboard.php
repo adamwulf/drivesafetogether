@@ -102,13 +102,53 @@
 	</script>
 </footer>
 <script>
+var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+function thisWeekArea(axes){
+	var markings = [];
+	var d = new Date(axes.xaxis.max);
+
+	// go to the first Saturday
+
+	d.setUTCDate(d.getUTCDate() - 7); // get last week
+	d.setUTCSeconds(0);
+	d.setUTCMinutes(0);
+	d.setUTCHours(0);
+
+	var lastWeek = d.getTime();
+
+	// when we don't set yaxis, the rectangle automatically
+	// extends to infinity upwards and downwards
+
+	markings.push({ xaxis: { from: lastWeek, to: axes.xaxis.max } });
+
+	return markings;
+}
+
 $.ajax("http://drivesafetogether.com/?data", {
 	success : function (data, status, xhr){
+		var tickValues = [];
+		var currmin = new Date().getTime();
+		for(i=0;i<data.length;i++){
+			var d = data[i];
+			if(d[0] < currmin) currmin = d[0];
+			tickValues.push(d[0]);
+		}
 		var options = {
 			xaxis: {
 				mode: "time",
-				timeformat: "%b",
-				tickSize: [1, "month"]
+				tickFormatter:function (val, axis) {
+					var dt = new Date(val);
+					var ndt = new Date(val + 6*24*60*60*1000);
+					var nm = ndt.getUTCMonth() != dt.getUTCMonth() ? (months[ndt.getUTCMonth()] + " ") : "";
+			        return months[dt.getUTCMonth()] + dt.getUTCDate() +  " - " + nm + ndt.getUTCDate();
+			    },
+				min: currmin - 1 * 1 * 24 * 60 * 60 * 1000,
+				max: currmin + 5 * 7 * 24 * 60 * 60 * 1000,
+				ticks: tickValues
+			},
+			grid: {
+				markings: thisWeekArea
 			}
 		};
 		var plot = $.plot("#placeholder", [data], options);
