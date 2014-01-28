@@ -117,7 +117,8 @@ class EasyApp{
 		$user_id = $this->getAutomaticUserId();
 		if($this->isLoggedIn()){
 			$sql = "SELECT YEARWEEK(startdt,1) as dt, SUM(hard_accels) AS hard_accels, SUM(hard_brakes) AS hard_brakes, SUM(distance_meters) AS distance, "
-				 . " AVG(average_mpg) AS average_mpg, SUM(duration_over_80_s + duration_over_75_s) AS duration_speeding "
+				 . " AVG(average_mpg) AS average_mpg, SUM(duration_over_80_s + duration_over_75_s) AS duration_speeding, "
+				 . " SUM(fuel_cost_usd * fuel_volume_gal) AS fuel_cost "
 				 . " FROM automatic_trips WHERE enddt > '" . addslashes($startdt) . "' AND startdt < '" . addslashes($enddt) . "' "
 			     . " AND user_id = '" . addslashes($user_id) . "' "
 			     . " GROUP BY dt ORDER BY dt DESC";

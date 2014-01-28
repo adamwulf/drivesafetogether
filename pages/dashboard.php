@@ -40,15 +40,18 @@
 		</div>
 	</div>
 </section>
-<section id="this-week" class='clearfix'>
+<section id="last7" class='clearfix'>
 	<h2>This Week</h2>
 	<div class='col23'>
-		<h3>Score / Brakes,accel,speeding / MPG / distance</h3>
-		<div class='roundedBox' style='overflow:auto;'>
-<?
-	$response = $app->automatic()->getTrips(1, 1);
-	print_r($response);
-?>
+		<h3><a href='javascript:;' class='brakes'>Hard Brakes & Accel</a> | 
+			<a href='javascript:;' class='speeding'>Speeding</a> | 
+			<a href='javascript:;' class='distance'>Distance</a> |
+			<a href='javascript:;' class='mpg'>MPG</a> |
+			<a href='javascript:;' class='fuel_cost'>Money</a>
+		</h3>
+		<p>Loading...</p>
+		<div class='graph-holder'>
+			<div class="graph"></div>
 		</div>
 	</div>
 	<div class='col3 stat'>
@@ -61,12 +64,13 @@
 		</div>
 	</div>
 </section>
-<section id="last-weeks" class='clearfix'>
+<section id="last30" class='clearfix'>
 	<h2>Last 30 days</h2>
 	<h3><a href='javascript:;' class='brakes'>Hard Brakes & Accel</a> | 
 		<a href='javascript:;' class='speeding'>Speeding</a> | 
 		<a href='javascript:;' class='distance'>Distance</a> |
-		<a href='javascript:;' class='mpg'>MPG</a>
+		<a href='javascript:;' class='mpg'>MPG</a> |
+		<a href='javascript:;' class='fuel_cost'>Money</a>
 	</h3>
 	<p>Loading...</p>
 	<div class='graph-holder'>

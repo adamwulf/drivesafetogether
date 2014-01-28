@@ -2,7 +2,7 @@
 
 header("Content-Type: application/json");
 
-if($_GET["graph"] == "last30"){
+if($_GET["graph"] == "last30" || $_GET["graph"] == "last7"){
 	$data = $app->getTripDataBetween(date("Y-m-d 00:00:00", time() - 6*7*24*60*60), date("Y-m-d 00:00:00", time() + 24*60*60));
 	$out = array();
 	foreach($data as $d){
@@ -16,7 +16,9 @@ if($_GET["graph"] == "last30"){
 		}else if($_GET["data"] == "mpg"){
 			$out[] = array($stamp, (int) $d->average_mpg);
 		}else if($_GET["data"] == "distance"){
-			$out[] = array($stamp, (int) $d->distance * 0.000621371); // conver to miles
+			$out[] = array($stamp, (int) $d->distance * 0.000621371); // convert to miles
+		}else if($_GET["data"] == "fuel_cost"){
+			$out[] = array($stamp, $d->fuel_cost);
 		}
 	}
 	/* array_splice($out, 0, 1); */

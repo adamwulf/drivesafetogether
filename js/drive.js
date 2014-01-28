@@ -20,27 +20,28 @@ $(function(){
 		return [{ xaxis: { from: lastWeek, to: maxDt } }];
 	}
 	
-	function Last30Days(){
+	function FourStatsGraph(graphId){
 		var currSelectedTab = "brakes";
 		var that = this;
 		
 		this.load = function(whichToLoad){
-			$.ajax("http://drivesafetogether.com/?data=" + whichToLoad + "&graph=last30", {
+			$.ajax("http://drivesafetogether.com/?data=" + whichToLoad + "&graph=" + graphId, {
 				success : function (data, status, xhr){
 					if(currSelectedTab == whichToLoad){
-					
 						if(whichToLoad == "brakes"){
-							$("#last-weeks p").text("Lower is Better! The number of hard brakes and fast accelerations is shown below.");
+							$("#" + graphId + " p").text("Lower is Better! The number of hard brakes and fast accelerations:");
 						}else if(whichToLoad == "mpg"){
-							$("#last-weeks p").text("Higher is Better! The average miles per gallon achieved during the week.");
+							$("#" + graphId + " p").text("Higher is Better! The average miles per gallon achieved during the week:");
 						}else if(whichToLoad == "distance"){
-							$("#last-weeks p").text("Lower is Better! The total distance travelled in miles.");
+							$("#" + graphId + " p").text("Lower is Better! The total distance travelled in miles:");
 						}else if(whichToLoad == "speeding"){
-							$("#last-weeks p").text("Lower is Better! The number of minutes spent speeding during the past week (over 75 mph).");
+							$("#" + graphId + " p").text("Lower is Better! The number of minutes spent speeding (over 75 mph):");
+						}else if(whichToLoad == "fuel_cost"){
+							$("#" + graphId + " p").text("Lower is Better! Amount of hard-earned $$$ spent on fuel:");
 						}
 						
-						$("#last-weeks h3 a").removeClass("active");
-						$("#last-weeks h3 a." + whichToLoad).addClass("active");
+						$("#" + graphId + " h3 a").removeClass("active");
+						$("#" + graphId + " h3 a." + whichToLoad).addClass("active");
 						var tickValues = [];
 						var currmin = new Date().getTime();
 						var maxVal = 0;
@@ -85,13 +86,19 @@ $(function(){
 								reserveSpace: 0,
 								min: - (maxVal * .05),
 								minTickSize: 2,
-								tickDecimals: 0
+								tickDecimals: 0,
+								tickFormatter:function (val, axis) {
+									if(whichToLoad == "fuel_cost"){
+										return "$" + (Math.round(val));
+									}
+									return val;
+							    },
 							},
 							grid: {
 								markings: markings
 							}
 						};
-						var plot = $.plot("#30dayGraphPlaceholder", [data], options);
+						var plot = $.plot("#" + graphId + " .graph", [data], options);
 					}
 				},
 				error : function(xhr, status, error){
@@ -100,25 +107,32 @@ $(function(){
 			});
 		}
 		
-		$("#last-weeks h3 a.brakes").click(function(){
+		$("#" + graphId + " h3 a.brakes").click(function(){
 			that.load("brakes");
 			currSelectedTab = "brakes";
 		});
-		$("#last-weeks h3 a.speeding").click(function(){
+		$("#" + graphId + " h3 a.speeding").click(function(){
 			that.load("speeding");
 			currSelectedTab = "speeding";
 		});
-		$("#last-weeks h3 a.mpg").click(function(){
+		$("#" + graphId + " h3 a.mpg").click(function(){
 			that.load("mpg");
 			currSelectedTab = "mpg";
 		});
-		$("#last-weeks h3 a.distance").click(function(){
+		$("#" + graphId + " h3 a.distance").click(function(){
 			that.load("distance");
 			currSelectedTab = "distance";
 		});
+		$("#" + graphId + " h3 a.fuel_cost").click(function(){
+			that.load("fuel_cost");
+			currSelectedTab = "fuel_cost";
+		});
 	}
 	
-	var last30Days = new Last30Days();
+	var last30Days = new FourStatsGraph("last30");
+	last30Days.load("brakes");
+
+	var last30Days = new FourStatsGraph("last7");
 	last30Days.load("brakes");
 
 });
