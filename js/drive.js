@@ -93,8 +93,7 @@ $(function(){
 								min: currmin,
 								max: currmax,
 								ticks: tickValues,
-								tickLength: 0,
-								labelWidth:30
+								tickLength: 0
 							},
 							yaxis: {
 								labelWidth:30,
@@ -107,7 +106,7 @@ $(function(){
 										return "$" + (Math.round(val));
 									}
 									return val;
-							    },
+							    }
 							},
 							grid: {
 								markings: markings,
