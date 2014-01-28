@@ -21,6 +21,7 @@ footer{
 	max-width: 800px;
 	margin: 0 auto;
 	border-top: 1px solid #c1c1c1;
+	font-size: 8pt;
 }
 #logout{
 	margin:20px;
@@ -51,13 +52,10 @@ p{
 	font-size: 10pt;
 }
 div.roundedBox{
-	height: 200px;
-	margin-right: 20px;
-	border: 1px solid #697279;
+	height: 170px;
+	margin: 8px 20px 0 0;
+	border: 2px solid #697279;
 	border-radius: 10px 0 10px 0;
-}
-#friends #allfriends{
-	margin-right:0;
 }
 .col3{
 	width: 33%;
@@ -95,10 +93,9 @@ html[xmlns] .clearfix {
 	width: auto;
 	height:200px;
 	margin-top:-8px;
-	margin-left:-48px;
-	margin-right:-40px;
+	margin-left: -36px;
 	border-radius: 10px 0 10px 0;
 }
 div.flot-y-axis.flot-y1-axis.yAxis.y1Axis{
-	margin-left: 0px;
+	margin-left: -4px;
 }

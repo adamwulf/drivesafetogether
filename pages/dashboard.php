@@ -19,15 +19,17 @@
 <section id="friends" class='clearfix'>
 	<h2>Friends</h2>
 	<div class='col3'>
-		<h3>Scores</h3>
+		<h3>Speeding</h3>
 		<div id='facebook' class='roundedBox import'>
-			which of your friends is winning highest scores this week
+			which of your friends is winning speeding the least.
+			List top 10 only, so that it doesn't become a reverse competition.
 		</div>
 	</div>
 	<div class='col3'>
 		<h3>Brakes/Accel</h3>
 		<div id='twitter' class='roundedBox import'>
-			fewest brake/accel/speeding warnings this week
+			fewest brake/accel/speeding warnings this week.
+			List top 10 only, so that it doesn't become a reverse competition.
 		</div>
 	</div>
 	<div class='col3'>
@@ -49,13 +51,14 @@
 			<a href='javascript:;' class='mpg'>MPG</a> |
 			<a href='javascript:;' class='fuel_cost'>Money</a>
 		</h3>
-		<p>Loading...</p>
+		<p class='graphDesc'>Loading...</p>
 		<div class='graph-holder'>
 			<div class="graph"></div>
 		</div>
 	</div>
 	<div class='col3 stat'>
 		<h3>Today</h3>
+		<p>How're you doing?</p>
 		<div class='roundedBox'>
 			Score:<br>
 			brakes, accel, speeding:<br>
@@ -72,7 +75,7 @@
 		<a href='javascript:;' class='mpg'>MPG</a> |
 		<a href='javascript:;' class='fuel_cost'>Money</a>
 	</h3>
-	<p>Loading...</p>
+	<p class='graphDesc'>Loading...</p>
 	<div class='graph-holder'>
 		<div id="30dayGraphPlaceholder" class="graph"></div>
 	</div>
@@ -104,6 +107,7 @@
 </section>
 <footer>
 	Copyright (c) 2014 Milestone Made, LLC<br>
+	<a href="http://milestonemade.com">milestonemade.com</a> | 
 	<script language="JavaScript">
 					var name = "adam.wulf";
 					var domain = "gmail.com";
