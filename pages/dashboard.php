@@ -6,6 +6,7 @@
 <script src="//drivesafetogether.com/js/flot/jquery.flot.js"></script>
 <script src="//drivesafetogether.com/js/flot/jquery.flot.resize.js"></script>
 <script src="//drivesafetogether.com/js/flot/jquery.flot.time.js"></script>
+<script src="//drivesafetogether.com/js/drive.js"></script>
 </head>
 <body>
 <? include ROOT . "pages/analytics.php"; ?>
@@ -62,9 +63,14 @@
 </section>
 <section id="last-weeks" class='clearfix'>
 	<h2>Last 30 days</h2>
-	<h3>Score / Brakes,accel,speeding / MPG / distance</h3>
-	<div class='roundedBox'>
-		<div id="placeholder" class="graph"></div>
+	<h3><a href='javascript:;' class='brakes'>Hard Brakes & Accel</a> | 
+		<a href='javascript:;' class='speeding'>Speeding</a> | 
+		<a href='javascript:;' class='distance'>Distance</a> |
+		<a href='javascript:;' class='mpg'>MPG</a>
+	</h3>
+	<p>Loading...</p>
+	<div class='graph-holder'>
+		<div id="30dayGraphPlaceholder" class="graph"></div>
 	</div>
 </section>
 <section id="your-car" class='clearfix'>
@@ -101,62 +107,5 @@
 					document.write(name + "@" + domain + '</a>');
 	</script>
 </footer>
-<script>
-var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-function thisWeekArea(axes){
-	var markings = [];
-	var d = new Date(axes.xaxis.max);
-
-	// go to the first Saturday
-
-	d.setUTCDate(d.getUTCDate() - 7); // get last week
-	d.setUTCSeconds(0);
-	d.setUTCMinutes(0);
-	d.setUTCHours(0);
-
-	var lastWeek = d.getTime();
-
-	// when we don't set yaxis, the rectangle automatically
-	// extends to infinity upwards and downwards
-
-	markings.push({ xaxis: { from: lastWeek, to: axes.xaxis.max } });
-
-	return markings;
-}
-
-$.ajax("http://drivesafetogether.com/?data", {
-	success : function (data, status, xhr){
-		var tickValues = [];
-		var currmin = new Date().getTime();
-		for(i=0;i<data.length;i++){
-			var d = data[i];
-			if(d[0] < currmin) currmin = d[0];
-			tickValues.push(d[0]);
-		}
-		var options = {
-			xaxis: {
-				mode: "time",
-				tickFormatter:function (val, axis) {
-					var dt = new Date(val);
-					var ndt = new Date(val + 6*24*60*60*1000);
-					var nm = ndt.getUTCMonth() != dt.getUTCMonth() ? (months[ndt.getUTCMonth()] + " ") : "";
-			        return months[dt.getUTCMonth()] + dt.getUTCDate() +  " - " + nm + ndt.getUTCDate();
-			    },
-				min: currmin - 1 * 1 * 24 * 60 * 60 * 1000,
-				max: currmin + 5 * 7 * 24 * 60 * 60 * 1000,
-				ticks: tickValues
-			},
-			grid: {
-				markings: thisWeekArea
-			}
-		};
-		var plot = $.plot("#placeholder", [data], options);
-	},
-	error : function(xhr, status, error){
-		alert(status + ": " + error);
-	}
-})
-</script>
 </body>
 </html>
