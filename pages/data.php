@@ -30,6 +30,9 @@ if($_GET["graph"] == "last30"){
 	foreach($data as $d){
 		$dtstr = $d->dt;
 		$stamp = strtotime($dtstr) * 1000;
+		
+/* 		echo $d->dt . " " . ($stamp/1000) . " gmt: " . gmdate("Y-m-d", $stamp/1000) . " normal: " . date("Y-m-d",$stamp/1000) . "\n"; */
+		
 		if($_GET["data"] == "brakes"){
 			$out[] = array($stamp, (int) $d->hard_accels + $d->hard_brakes);
 		}else if($_GET["data"] == "speeding"){

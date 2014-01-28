@@ -1,5 +1,6 @@
 $(function(){
 	var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+	var timezoneOffset =  + (new Date()).getTimezoneOffset()*60*1000;
 
 	function thisWeekArea(maxDt, days){
 		var markings = [];
@@ -83,10 +84,14 @@ $(function(){
 								tickFormatter:function (val, axis) {
 									var dt = new Date(val);
 									if(daysToMark > 1){
-										var ndt = new Date(val + 6*24*60*60*1000);
-										var nm = ndt.getUTCMonth() != dt.getUTCMonth() ? (months[ndt.getUTCMonth()] + " ") : "";
-								        return months[dt.getUTCMonth()] + dt.getUTCDate() +  " - " + nm + ndt.getUTCDate();
+										var pdt = new Date(val - 3.5*24*60*60*1000);
+										var ndt = new Date(val + 2.5*24*60*60*1000);
+										var nm = ndt.getUTCMonth() != pdt.getUTCMonth() ? (months[ndt.getUTCMonth()] + " ") : "";
+								        return months[pdt.getUTCMonth()] + pdt.getUTCDate() +  " - " + nm + ndt.getUTCDate();
 									}else{
+										// since the tick label is teh average of two dates,
+										// this will show "yesterday", so add a day to move it to today
+										var dt = new Date(val + 24*60*60*1000);
 								        return months[dt.getUTCMonth()] + dt.getUTCDate();
 									}
 							    },
