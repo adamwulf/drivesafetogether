@@ -117,21 +117,38 @@ class EasyApp{
 		$user_id = $this->getAutomaticUserId();
 		if($this->isLoggedIn()){
 			if($unit == "week"){
+				$step = 7;
 				$dt = "YEARWEEK(startdt,1)";
+				$dt = "(DATE(startdt) - INTERVAL -2 + DAYOFWEEK(startdt) DAY)";
 			}else{
+				$step = 1;
 				$dt = "DATE(startdt)";
 			}
-			$sql = "SELECT " . $dt . " as dt, SUM(hard_accels) AS hard_accels, SUM(hard_brakes) AS hard_brakes, SUM(distance_meters) AS distance, "
-				 . " AVG(average_mpg) AS average_mpg, SUM(duration_over_80_s + duration_over_75_s) AS duration_speeding, "
+			$sql = "SELECT " . $dt . " as dt, UNIX_TIMESTAMP($dt) AS rawdt, SUM(hard_accels) AS hard_accels, SUM(hard_brakes) AS hard_brakes, SUM(distance_meters) AS distance, "
+				 . " SUM(distance_meters * average_mpg) AS average_mpg, SUM(duration_over_80_s + duration_over_75_s) AS duration_speeding, "
 				 . " SUM(fuel_cost_usd * fuel_volume_gal) AS fuel_cost "
-				 . " FROM automatic_trips WHERE enddt > '" . addslashes($startdt) . "' AND startdt < '" . addslashes($enddt) . "' "
+				 . " FROM `automatic_trips` WHERE enddt > '" . addslashes($startdt) . "' AND startdt < '" . addslashes($enddt) . "' "
 			     . " AND user_id = '" . addslashes($user_id) . "' "
 			     . " GROUP BY dt ORDER BY dt DESC";
 			$results = $this->db->mysql()->query($sql);
 			
+			
+			
 			$out = array();
+			$lastdt = strtotime(gmdate("Y-m-d"));
+/* 			echo "starting: " . date("Y-m-d", $lastdt) . "\n"; */
 			while($row = $results->fetch_array()){
-				$out[] = (object) $row;
+				$row = (object)$row;
+				$row->average_mpg = $row->average_mpg / $row->distance;
+				
+/* 				echo "row data for: " . date("Y-m-d", $row->rawdt) . "\n"; */
+				while(($lastdt - $row->rawdt) > $step*24*60*60){
+					$lastdt -= $step*24*60*60;
+					$out[] = (object) array("rawdt" => $lastdt, "hard_accels" => 0, "hard_brakes" => 0, "distance" => 0, "average_mpg" => 0, "duration_speeding" => 0, "fuel_cost" => 0);
+/* 					echo "here " . date("Y-m-d", $lastdt) . "\n"; */
+				}
+				$out[] = $row;
+				$lastdt = $row->rawdt;
 			}
 			return $out;
 		}

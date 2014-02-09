@@ -2,31 +2,14 @@ $(function(){
 	var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 	var timezoneOffset =  + (new Date()).getTimezoneOffset()*60*1000;
 
-	function thisWeekArea(maxDt, days){
+	function thisWeekArea(maxDt, days, buffer){
 		var markings = [];
-		var d = new Date(maxDt);
-	
-		// go to the first Saturday
-	
-		d.setUTCDate(d.getUTCDate() - days); // get last week
-		d.setUTCSeconds(0);
-		d.setUTCMinutes(0);
-		d.setUTCHours(0);
-	
-		var lastWeek = d.getTime();
+		var lastWeek = maxDt - days/2.0*24*60*60*1000;
 	
 		// when we don't set yaxis, the rectangle automatically
 		// extends to infinity upwards and downwards
 	
-		return [{ xaxis: { from: lastWeek, to: maxDt } }];
-	}
-	
-	function alignDateToDay(dt){
-		var dt = new Date(dt);
-		dt.setUTCSeconds(0);
-		dt.setUTCMinutes(0);
-		dt.setUTCHours(0);
-		return dt.getTime();
+		return [{ xaxis: { from: lastWeek, to: maxDt + buffer} }];
 	}
 	
 	function FourStatsGraph(graphId, daysToMark){
@@ -51,9 +34,11 @@ $(function(){
 						
 						$("#" + graphId + " h3 a").removeClass("active");
 						$("#" + graphId + " h3 a." + whichToLoad).addClass("active");
+
+
 						var tickValues = [];
 						var currmin = new Date().getTime();
-						var currmax = new Date().getTime();
+						var currmax = 0;
 						var maxVal = 0;
 						
 						for(i=0;i<data.length;i++){
@@ -61,37 +46,52 @@ $(function(){
 							if(d[0] < currmin) currmin = d[0];
 							if(d[0] > currmax) currmax = d[0];
 							if(d[1] > maxVal) maxVal = d[1];
-							if(i > 0){
-								tickValues.push((data[i][0] + data[i-1][0])/2);
-							}
+							tickValues.push(data[i][0]);
 						}
 						
-						currmin = alignDateToDay(currmin);
-						currmax = alignDateToDay(currmax) - 24*60*60*1000;
+						currmin = currmin;
+						currmax = currmax;
 						
-						var markings = thisWeekArea(currmax, daysToMark);
+						var buffer = 0;
+						if(daysToMark > 1){
+							buffer = 2*24*60*60*1000;
+						}else{
+							buffer = 8*60*60*1000;
+						}
+						
+						var markings = thisWeekArea(currmax, daysToMark, buffer);
+
+						currmin -= buffer;
+						currmax += buffer;
 
 						// set the ticks as markings in the graph
-						for(i=0;i<data.length;i++){
-							var d = data[i];
-							var tickMarking = { xaxis: { from: d[0], to: d[0] }, color: "#d0d0d0" };
+						for(i=1;i<data.length;i++){
+							var mark = (data[i][0] + data[i-1][0]) / 2;
+							var tickMarking = { xaxis: { from: mark, to: mark }, color: "#d0d0d0" };
 							markings.push(tickMarking);
 						}
 
 						var options = {
+							series: {
+						        lines: { show: true},
+						        points: { show: true, fill: true }
+						    },
 							xaxis: {
 								mode: "time",
 								tickFormatter:function (val, axis) {
 									var dt = new Date(val);
 									if(daysToMark > 1){
-										var pdt = new Date(val - 3.5*24*60*60*1000);
-										var ndt = new Date(val + 2.5*24*60*60*1000);
+										var pdt = new Date(0);
+										pdt.setUTCMilliseconds(val);
+										var ndt = new Date(0);
+										ndt.setUTCMilliseconds(val + 6*24*60*60*1000);
 										var nm = ndt.getUTCMonth() != pdt.getUTCMonth() ? (months[ndt.getUTCMonth()] + " ") : "";
 								        return months[pdt.getUTCMonth()] + pdt.getUTCDate() +  " - " + nm + ndt.getUTCDate();
 									}else{
 										// since the tick label is teh average of two dates,
 										// this will show "yesterday", so add a day to move it to today
-										var dt = new Date(val + 24*60*60*1000);
+										var dt = new Date(0);
+										dt.setUTCMilliseconds(val);
 								        return months[dt.getUTCMonth()] + dt.getUTCDate();
 									}
 							    },
@@ -102,17 +102,18 @@ $(function(){
 							},
 							yaxis: {
 								labelWidth:30,
-								reserveSpace: 0,
+/* 								reserveSpace: 0, */
 								min: - (maxVal * .05),
-								minTickSize: 2,
-								tickDecimals: 0,
+/* 								minTickSize: 2, */
+								tickDecimals: 1,
 								tickFormatter:function (val, axis) {
 									if(whichToLoad == "fuel_cost"){
 										return "$" + (Math.round(val));
 									}
 									return val;
 							    }
-							},
+							}
+							,
 							grid: {
 								markings: markings,
 								borderColor: "#697279"
