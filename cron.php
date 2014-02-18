@@ -18,7 +18,7 @@ $db = new JSONtoMYSQL($mysql);
 $app = new EasyApp($db);
 
 
-$app->cronImportTrips();
+$app->cronImportTrips(isset($_REQUEST["force"]) && $_REQUEST["force"]);
 
 echo "done.";
 

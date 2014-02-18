@@ -143,10 +143,22 @@ class EasyApp{
 				
 /* 				echo "row data for: " . date("Y-m-d", $row->rawdt) . "\n"; */
 				while(($lastdt - $row->rawdt) > $step*24*60*60){
+					// missing data
 					$lastdt -= $step*24*60*60;
+					
+					if($unit == "week"){
+						// make sure stamps align to monday
+						$dw = (int)gmdate("w", $lastdt);
+						$dw = 7 - ($dw - 1);
+						$lastdt += $dw * 24 * 60 * 60;
+					}
+					
+					// add empty row for missing data
 					$out[] = (object) array("rawdt" => $lastdt, "hard_accels" => 0, "hard_brakes" => 0, "distance" => 0, "average_mpg" => 0, "duration_speeding" => 0, "fuel_cost" => 0);
 /* 					echo "here " . date("Y-m-d", $lastdt) . "\n"; */
 				}
+
+
 				$out[] = $row;
 				$lastdt = $row->rawdt;
 			}

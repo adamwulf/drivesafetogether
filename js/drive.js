@@ -49,8 +49,17 @@ $(function(){
 							tickValues.push(data[i][0]);
 						}
 						
-						currmin = currmin;
-						currmax = currmax;
+						var maxDt = new Date(0);
+						maxDt.setUTCMilliseconds(currmax);
+						if(maxDt.getDay() > 0){
+							var daysToAdd = 7 - maxDt.getDay();
+							currmax += daysToAdd * 24 * 60 * 60 * 1000;
+						}
+						maxDt = new Date(0);
+						maxDt.setUTCMilliseconds(currmax);
+/* 						alert(graphId + "\n" + currmax + "\n" + maxDt + "\n" + maxDt.getDay()); */
+						
+
 						
 						var buffer = 0;
 						if(daysToMark > 1){
@@ -101,14 +110,17 @@ $(function(){
 								tickLength: 0
 							},
 							yaxis: {
-								labelWidth:30,
+								labelWidth:40,
 /* 								reserveSpace: 0, */
 								min: - (maxVal * .05),
 /* 								minTickSize: 2, */
-								tickDecimals: 1,
+								tickDecimals: 2,
 								tickFormatter:function (val, axis) {
 									if(whichToLoad == "fuel_cost"){
-										return "$" + (Math.round(val));
+										if(maxVal > 2){
+										return "$" + Math.round(val);
+										}
+										return "$" + val.toFixed(2);
 									}
 									return val;
 							    }
